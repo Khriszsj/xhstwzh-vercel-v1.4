@@ -1,79 +1,88 @@
-# 小红书长文转图工作台
-> Xiaohongshu Long-Form Post to Image Studio
+# 小红书长文转图工作台（Vercel 会话版）
+> Xiaohongshu Long-Form Post to Image Studio (Vercel Session Edition)
 
-本项目是一个本地运行的 Next.js 工具，面向小红书长文创作者，支持：
-English: This project is a locally running Next.js tool for Xiaohongshu long-form content creators, with support for:
+本项目是一个面向小红书长文创作者的 Next.js 工具，当前版本适配 Vercel Hobby 免费部署。
+English: This project is a Next.js tool for Xiaohongshu long-form creators, and this version is adapted for free deployment on Vercel Hobby.
+
+每次打开页面都会进入默认编辑界面，当前标签页内保留编辑状态，刷新或关闭后内容会重置。
+English: Each visit starts from the default editor, the current tab keeps its working state, and refresh or close will reset the content.
 
 - 富文本编辑（加粗、字号、颜色、换行、空格保留）
   English: Rich text editing (bold, font size, color, line breaks, and preserved spaces)
 - 编辑区插图（上传 / 粘贴 / 拖拽）
-  English: Insert images into the editor (upload / paste / drag and drop)
+  English: Insert images into the editor by upload, paste, or drag and drop
 - mac 输入法 emoji 直接编辑并导出
-  English: Direct editing and export of emoji entered with the macOS input method
-- 对话式自然语言排版命令（本地规则引擎）
-  English: Conversational natural-language layout commands (local rule engine)
-- 自动分页预览（1080x1440）
-  English: Automatic paginated preview (1080x1440)
-- 导出发布包（PNG 图集 + publish.md + meta.json + zip）
-  English: Export a publishing bundle (PNG images + publish.md + meta.json + zip)
-- 单页图片下载
-  English: Single-page image download
+  English: Edit and export emoji entered with the macOS input method
+- 对话式自然语言排版命令
+  English: Conversational natural-language layout commands
+- 自动分页预览（1080 x 1440）
+  English: Automatic paginated preview (1080 x 1440)
+- 浏览器端下载当前页 PNG
+  English: Download the current page as PNG directly in the browser
+- 浏览器端导出发布包（PNG 图集 + publish.md + meta.json + zip）
+  English: Export a publishing bundle in the browser (PNG pages + publish.md + meta.json + zip)
 
 ## 1. 环境要求
 > 1. Environment Requirements
 
 - Node.js >= 20
-- pnpm >= 9（或 npm）
-  English: pnpm >= 9 (or npm)
-- Playwright Chromium（用于导出图片）
-  English: Playwright Chromium (used for image export)
+  English: Node.js >= 20
+- npm >= 10（或 pnpm >= 9）
+  English: npm >= 10 (or pnpm >= 9)
 
 ## 2. 启动步骤
 > 2. Getting Started
 
 ```bash
-pnpm install
-pnpm exec playwright install chromium
-pnpm dev
+npm install
+npm run dev
 ```
 
 浏览器打开 `http://localhost:3000`。
 English: Open `http://localhost:3000` in your browser.
 
-## 3. 目录说明
-> 3. Directory Overview
+## 3. 当前版本特性
+> 3. Current Version Behavior
 
-- `app/`：Next.js 页面与 API
-  English: `app/`: Next.js pages and API routes
-- `components/`：编辑器与分页预览
-  English: `components/`: Editor and paginated preview
-- `lib/`：文档模型、分页算法、导出引擎、规则引擎、SQLite 数据层
-  English: `lib/`: Document model, pagination algorithm, export engine, rule engine, and SQLite data layer
-- `storage/`：本地数据库、导出文件、素材文件、风险词词库
-  English: `storage/`: Local database, exported files, asset files, and risk-word dictionary
+- 不保存历史项目，不连接数据库
+  English: No historical project storage and no database connection
+- 图片在当前会话中以内嵌数据形式存在
+  English: Images are stored as embedded data within the current session
+- 刷新页面后，文本和图片都会恢复到默认初始状态
+  English: After refresh, both text and images return to the default initial state
+- 导出在浏览器端完成，不依赖 Playwright 或服务端磁盘写入
+  English: Export runs in the browser and does not rely on Playwright or server-side disk writes
 
-## 4. 关键 API
-> 4. Key API Endpoints
+## 4. 目录说明
+> 4. Directory Overview
 
-- `POST /api/assets/upload`：上传图片素材
-  English: `POST /api/assets/upload`: Upload image assets
+- `app/`：Next.js 页面与轻量 API
+  English: `app/`: Next.js pages and lightweight API routes
+- `components/`：编辑器、分页预览、会话内交互组件
+  English: `components/`: Editor, paginated preview, and session-based interaction components
+- `lib/`：文档模型、分页算法、命令引擎、浏览器导出工具
+  English: `lib/`: Document model, pagination logic, command engine, and browser export utilities
+- `storage/risk_words.txt`：风险词词库原始备份
+  English: `storage/risk_words.txt`: Original backup of the risk-word list
+
+## 5. 关键 API
+> 5. Key API Endpoints
+
 - `POST /api/editor/command`：自然语言排版命令解析
   English: `POST /api/editor/command`: Parse natural-language layout commands
 - `POST /api/paginate`：分页计算
   English: `POST /api/paginate`: Run pagination calculation
-- `POST /api/export`：导出整包 zip
-  English: `POST /api/export`: Export the full zip bundle
-- `GET /api/export/page/:projectId/:pageNo`：导出单页 PNG
-  English: `GET /api/export/page/:projectId/:pageNo`: Export a single page as PNG
-- `PUT /api/projects/:id/content`：保存 RichDoc
-  English: `PUT /api/projects/:id/content`: Save RichDoc content
+- `POST /api/suggestions`：生成标题和标签建议
+  English: `POST /api/suggestions`: Generate title and tag suggestions
+- `POST /api/compliance/check`：风险词检查
+  English: `POST /api/compliance/check`: Check risk words
 
-## 5. 注意事项
-> 5. Notes
+## 6. 注意事项
+> 6. Notes
 
-- 所有文章与素材默认本地存储，不上传云端。
-  English: All articles and assets are stored locally by default and are not uploaded to the cloud.
-- 当前导出依赖 Playwright；若 Chromium 未安装会导出失败。
-  English: Export currently depends on Playwright; export will fail if Chromium is not installed.
-- 插图当前支持 PNG/JPG/WebP（静态图）。
-  English: Inserted images currently support PNG/JPG/WebP (static images).
+- 当前版本是 Vercel 测试支线，目标是低成本上线验证
+  English: This version is the Vercel testing branch for low-cost deployment validation
+- 页面内容只在当前标签页会话中有效
+  English: Page content only persists within the current browser tab session
+- 若后续要恢复本地版完整持久化能力，应继续在主线仓库开发
+  English: If you want to restore the full persistent local version later, continue development in the main repository
