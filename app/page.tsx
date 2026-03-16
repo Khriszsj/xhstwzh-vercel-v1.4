@@ -385,6 +385,7 @@ export default function HomePage() {
         <div className="topbar-info">
           <strong>小红书长文转图工作台</strong>
           <div className="topbar-sub">Vercel 测试版 · 仅当前标签页 · 刷新后重置</div>
+          <div className="topbar-sub">创作者：舒克（小红书 587070070）</div>
         </div>
 
         <div className="topbar-actions">
